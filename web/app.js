@@ -155,8 +155,8 @@ function setQty(key, inp, host) {
   S.forced.set(key, v); S.exclude.delete(key); replan();
 }
 
-function mapData() {
-  const p = S.plan, covered = new Set(p.coveredStores), solo = S.solo && S.sel;
+function mapData(all = false) { // all：导出提案用，忽略工作台「只看一条」
+  const p = S.plan, covered = new Set(p.coveredStores), solo = !all && S.solo && S.sel;
   const data = {
     anchors: S.anchors.map((a, i) => ({ lng: a.lng, lat: a.lat, kind: a.kind, on: covered.has(i), name: a.name })),
     bus: p.lines.filter((l) => l.kind === 'bus' && l.qty && (!solo || l.key === S.sel)).map((l) => ({ key: l.key, name: l.name, qty: l.qty, path: pathOf(l.rid) })),
@@ -499,7 +499,7 @@ $('reportBtn').onclick = async () => {
   const custom = (S.brand || '') !== PRESETS[S.key].brand;
   const brand = S.brand || (S.mode === 'addr' && S.addrs[0] ? S.addrs[0].name : '目标客户');
   const preset = custom ? { ...S.preset, ...S.preset.generic, sources: [] } : S.preset;
-  const html = buildReport({ preset, brand, plan: S.plan, anchors: S.anchors, universe, inv: S.plan.inv, budget: S.budget, coverCheck, mode: S.mode, addrs: S.addrs, radius: { bus: S.busRadius, metro: S.metroRadius }, leaflet: { js: ljs, css: lcss }, mapData: { ...mapData(), extra: null, fit: true }, hypo: S.hypo, liveChecked: S.plan.inv.source === 'live' });
+  const html = buildReport({ preset, brand, plan: S.plan, anchors: S.anchors, universe, inv: S.plan.inv, budget: S.budget, coverCheck, mode: S.mode, addrs: S.addrs, radius: { bus: S.busRadius, metro: S.metroRadius }, leaflet: { js: ljs, css: lcss }, mapData: { ...mapData(true), extra: null, fit: true }, hypo: S.hypo, liveChecked: S.plan.inv.source === 'live' });
   const url = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
   const a = document.createElement('a'); a.href = url; a.download = `${S.brand}-新云户外提案-${S.budget / 10000}万.html`;
   window.open(url, '_blank'); a.click();

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>一页纸说明 · 即案 FLASHPLAN</title>
+<style>
+/* 一页纸说明：A4 竖版单页，内容同 ONE_PAGER.md */
+@page{size:210mm 297mm;margin:0}
+:root{--ink:#221c1a;--ink2:#5d544f;--line:rgba(34,28,26,.14);--red:#c2372d;--paper:#fffdfa}
+*{box-sizing:border-box;margin:0}
+html,body{width:210mm;height:297mm;overflow:hidden;background:var(--paper)}
+body{font:9.2pt/1.5 "PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);padding:11mm 13mm 9mm}
+header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid var(--ink);padding-bottom:3mm}
+.brand{font-size:20pt;font-weight:800;line-height:1}.brand b{color:var(--red)}.brand span{font:800 13pt system-ui,sans-serif;letter-spacing:.14em;color:var(--red);margin-left:6px}
+header small{font-size:8.5pt;color:var(--ink2);text-align:right;line-height:1.4}
+.one{margin-top:3.5mm;font-size:10.5pt;line-height:1.55;background:#f8efe9;border-left:3px solid var(--red);padding:2.5mm 4mm}
+h2{font-size:11pt;margin:4mm 0 1.5mm;display:flex;align-items:center;gap:6px}
+h2::before{content:"";width:4px;height:11pt;background:var(--red);border-radius:2px}
+ol,ul{padding-left:5mm}li{margin:.6mm 0}li b{color:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:8.8pt}td{border-bottom:1px solid var(--line);padding:1.2mm 2mm;vertical-align:top}td:first-child{white-space:nowrap;font-weight:700;width:28mm}
+code{font:8.4pt ui-monospace,Consolas,monospace;background:#efe7df;padding:0 3px;border-radius:3px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:5mm}
+.lim li{color:var(--ink2)}
+footer{position:absolute;left:13mm;right:13mm;bottom:8mm;display:flex;justify-content:space-between;font-size:8pt;color:var(--ink2);border-top:1px solid var(--line);padding-top:2mm}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><b>即案</b><span>FLASHPLAN</span><div style="font-size:10pt;font-weight:600;color:var(--ink2);margin-top:5px;letter-spacing:0">户外投放 AI 提案工作台 · 一页纸说明</div></div>
+  <small>INTERCITY HACK 湖州场 · AI+办公赛道<br>上海新云传媒命题</small>
+</header>
+<p class="one"><b>一句话：</b>把「查门店周边线路 → 红豆核档期 → 翻刊例算价 → 排上刊」这条要做好几天的人工链路，变成选行业、拖预算、点生成的几十秒流程；方案里每条线路的可售数和价格都能追溯到系统。</p>
+
+<h2>团队分工</h2>
+<table>
+<tr><td>品牌调研与策略</td><td>五个行业目标客户的选择、campaign 假设、品牌事实核实与来源、合规提示（《广告法》第 16/17/18/25 条）</td></tr>
+<tr><td>数据与系统使用</td><td>红豆库存逐月导出、大数据平台标签/轨迹/人流抓取，两系统资源 ID 关联与缺失值处理</td></tr>
+<tr><td>AI 工作流与开发</td><td>组案引擎、本地代理服务、工作台与提案生成、测试</td></tr>
+<tr><td>演示答辩</td><td>演示脚本、评委改输入时的讲解（预算变化清单、档期热度、上刊倒排）</td></tr>
+</table>
+
+<h2>AI 能力清单</h2>
+<ol>
+<li><b>门店圈选自动化：</b>输入任意品牌名，实时调用大数据平台 POI 检索，按 16 个区拆分取全量门店（瑞幸 1,097 家、招行 111 个网点）。</li>
+<li><b>覆盖匹配：</b>线路轨迹 500 米内算途经，地铁口直线距离 800 米内算就近（未按步行路径复核）；乐园这类门店离客源远的品牌，改用幼儿园、商场作人群锚点。</li>
+<li><b>预算内择优：</b>按「人流 × 门店相关度」贪心选点，首次覆盖新门店加分，同线加车按频次递减，单线 2–5 辆；组合投放按媒介配比分预算，两种口径的人流不直接比较。</li>
+<li><b>可售约束：</b>整段档期每天都空才算可售，已扣合同、预定、保养、续约保护；可按档期实时查询红豆。</li>
+<li><b>改预算即改案：</b>100–500 万任意调整，不到 60 毫秒重算，自动列出新增、加车、减车、移除的线路。</li>
+<li><b>上刊倒排：</b>按施工产能、雨天缓冲、医疗/保健食品广告审查期，倒推客户最晚定稿日，并按「误一补二」算出每延误一天的补偿额。</li>
+<li><b>假设书与自检：</b>campaign 七要素假设书逐条映射到方案；按评分口径的 10 条提交前自检实时打勾。</li>
+<li><b>brief 解析：</b>从 4A 邮件或口述里读出行业、品牌、预算、档期、媒体、地铁占比和服务半径（当前为规则解析；配置大模型接口后可补全规则抽不到的字段）。</li>
+</ol>
+
+<div class="cols">
+<div>
+<h2>数据使用说明</h2>
+<ul>
+<li><b>红豆系统：</b>按日期区间查询空车数（公交 430 条线路、地铁 861 个出口），2027 年 12 个月逐月快照 + 演示时实时查询。</li>
+<li><b>大数据平台：</b>公交/地铁口标签的坐标与人流、2023-05 日均人流、POI 门店检索、媒体覆盖分析复核、地铁线走向。</li>
+<li><b>资料包：</b>刊例口径（05 样本成交价、07 刊例区间）、上下刊流程、直客合同（损一补一）、4A 框架（误一补二）、brief 样本。</li>
+<li>未接入其他企业系统；其他客户品牌只显示首字，提案中不出现。</li>
+</ul>
+<h2>运行方式</h2>
+<ul>
+<li>Node.js 18+，无第三方依赖：<code>node server.mjs</code>，打开 <code>127.0.0.1:5188</code></li>
+<li>不连比赛系统也能完整离线演示；<code>npm test</code> 跑 12 项约束测试</li>
+<li>代码：<code>github.com/haokehu318-oss/huzhou</code></li>
+</ul>
+</div>
+<div>
+<h2>已知局限</h2>
+<ul class="lim">
+<li>人流是平台 2023 年 5 月的历史数据，公交按线路计、与车辆数无关，跨媒体相加未去重；只用于排序和量级，不是 2027 年广告实际被看到的人次。</li>
+<li>地铁口刊例取 07 区间中值；S 级出口与 AA 观光线无直接刊例，标「待核价」；折扣默认按刊例。</li>
+<li>102 个地铁口借用同站其他出口坐标，48 个出口无坐标，不参与选点。</li>
+<li>覆盖按直线距离计算，隔河、围墙处可能与实际步行距离差别较大。</li>
+<li>单晚施工上限、雨天缓冲比例是假设值，界面可改。</li>
+<li>红豆登录有滑块验证码，工作台不绕过，需人工登录后导入令牌（之后自动续期）。</li>
+</ul>
+</div>
+</div>
+<footer><span>即案 FLASHPLAN · 户外投放 AI 提案工作台</span><span>数据：新云红豆系统 · 新云大数据平台 · 赛题资料包</span></footer>
+</body>
+</html>
