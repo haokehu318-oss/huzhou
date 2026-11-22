@@ -1,0 +1,23 @@
+// 冒烟：参考 brief → 假设书 → 自检 → 截图（需先开无头 Edge 调试端口 9333）
+import fs from 'node:fs';
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const t = await (await fetch('http://127.0.0.1:9333/json')).json();
+const ws = new WebSocket(t.find((x) => x.type === 'page').webSocketDebuggerUrl);
+await new Promise((r) => (ws.onopen = r));
+let id = 0; const pend = new Map(), errs = [];
+ws.onmessage = (m) => { const j = JSON.parse(m.data); if (j.id && pend.has(j.id)) { pend.get(j.id)(j); pend.delete(j.id); } else if (j.method === 'Runtime.exceptionThrown') errs.push(j.params.exceptionDetails.exception?.description); };
+const send = (method, params = {}) => Promise.race([new Promise((r) => { const i = ++id; pend.set(i, r); ws.send(JSON.stringify({ id: i, method, params })); }), sleep(15000).then(() => ({}))]);
+const ev = async (e) => (await send('Runtime.evaluate', { expression: e, returnByValue: true, awaitPromise: true })).result?.result?.value;
+await send('Runtime.enable');
+await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 1000, deviceScaleFactor: 1, mobile: false });
+await send('Page.navigate', { url: 'http://127.0.0.1:5188/' }); await sleep(7000);
+console.log('checks', await ev(`document.querySelector('#checks h3').textContent`));
+await ev(`(()=>{const s=document.getElementById('refBrief');s.value='4';s.dispatchEvent(new Event('change'))})()`); await sleep(4000);
+console.log('ref-brief kpi', await ev(`[...document.querySelectorAll('.kpi b')].map(b=>b.textContent).join(' | ')`));
+console.log('hypo biz', await ev(`document.querySelector('#hypo textarea[data-k=biz]').value`));
+console.log('dates', await ev(`document.getElementById('start').value+'~'+document.getElementById('end').value`));
+console.log('checks', await ev(`document.querySelector('#checks').innerText.slice(0,600)`));
+await ev(`document.getElementById('checks').scrollIntoView()`); await sleep(500);
+const s = await send('Page.captureScreenshot', { format: 'png' }); fs.writeFileSync('data/cdp-checks.png', Buffer.from(s.result.data, 'base64'));
+console.log(errs.length ? errs.join('\n') : 'no errors');
+ws.close();

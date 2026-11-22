@@ -1,0 +1,20 @@
+// 冒烟：取消全部媒体 / 无效日期时旧结果隐藏、按钮禁用；恢复后正常；检查人流指标措辞
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const t = await (await fetch('http://127.0.0.1:9333/json')).json();
+const ws = new WebSocket(t.find((x) => x.type === 'page').webSocketDebuggerUrl);
+await new Promise((r) => (ws.onopen = r));
+let id = 0; const pend = new Map(), errs = [];
+ws.onmessage = (m) => { const j = JSON.parse(m.data); if (j.id && pend.has(j.id)) { pend.get(j.id)(j); pend.delete(j.id); } else if (j.method === 'Runtime.exceptionThrown') errs.push(j.params.exceptionDetails.exception?.description); };
+const send = (method, params = {}) => new Promise((r) => { const i = ++id; pend.set(i, r); ws.send(JSON.stringify({ id: i, method, params })); });
+const ev = async (e) => (await send('Runtime.evaluate', { expression: e, returnByValue: true })).result?.result?.value;
+await send('Runtime.enable');
+await send('Page.navigate', { url: 'http://127.0.0.1:5188/' }); await sleep(7000);
+const state = `JSON.stringify({kpi:document.getElementById('kpis').innerText.replace(/\\s+/g,' ').slice(0,200),mapShown:document.getElementById('map').offsetParent!==null,report:document.getElementById('reportBtn').disabled})`;
+const set = (bus, metro) => ev(`(()=>{for(const [i,v] of [['mBus',${bus}],['mMetro',${metro}]]){const c=document.getElementById(i);if(c.checked!==v){c.checked=v;c.dispatchEvent(new Event('change'))}}})()`);
+console.log('正常', await ev(state));
+await set(false, false); await sleep(500); console.log('无媒体', await ev(state));
+await ev(`document.getElementById('brandKw').value='浦发银行';document.getElementById('brandKw').dispatchEvent(new Event('input'))`); await sleep(300);
+await set(true, true); await sleep(800); console.log('恢复', await ev(state));
+await ev(`(()=>{const e=document.getElementById('end');e.value='2026-03-01';e.dispatchEvent(new Event('change'))})()`); await sleep(500); console.log('日期无效', await ev(state));
+console.log(errs.length ? errs.join('\n') : 'no errors');
+ws.close();

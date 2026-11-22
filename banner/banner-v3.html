@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>易拉宝 v3 · 即案 FLASHPLAN</title>
+<style>
+/* 易拉宝 v2：AI 主视觉 + 第一版的选点链路 / 真实地图 / 自检三块。800×2000 排版，2 倍导出 1600×4000 */
+:root{--ink:#221c1a;--ink2:#5d544f;--ink3:#8a807a;--paper:#f6f2ec;--card:#fffdfa;--line:rgba(34,28,26,.12);--red:#c2372d;--blue:#1f5f8b;--ok:#2f6b3a}
+*{box-sizing:border-box;margin:0}
+html,body{width:800px;height:2000px;overflow:hidden;background:var(--paper)}
+body{font:15px/1.55 "PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);font-variant-numeric:tabular-nums}
+.hero{position:relative;height:900px;overflow:hidden}
+.hero img{width:100%;height:100%;object-fit:cover;object-position:50% 0;display:block}
+.hero::after{content:"";position:absolute;inset:auto 0 0 0;height:80px;background:linear-gradient(rgba(246,242,236,0),var(--paper))}
+.hero .t{position:absolute;left:46px;right:46px;top:36px}
+.top{display:flex;justify-content:space-between;font-size:13px;color:var(--ink2)}
+.brand{font-size:30px;font-weight:800;letter-spacing:.02em;color:var(--ink);margin-top:20px;display:flex;align-items:baseline;gap:12px}
+.brand b{color:var(--red)}.brand span{font:800 22px/1 system-ui,sans-serif;letter-spacing:.16em;color:var(--red)}
+h1{font-size:56px;line-height:1.08;letter-spacing:-.02em;margin-top:8px}
+h1 span{color:var(--red)}
+.lede{font-size:18px;color:var(--ink2);margin-top:10px;max-width:660px;line-height:1.5}
+.tag{display:flex;gap:10px;margin-top:14px}
+.tag div{background:rgba(255,253,250,.72);border:1px solid var(--line);border-radius:10px;padding:6px 12px;display:flex;align-items:baseline;gap:8px}
+.tag b{font-size:19px;line-height:1.2;color:var(--red)}.tag span{font-size:12px;color:var(--ink2)}
+.body{padding:0 46px 18px;display:flex;flex-direction:column;gap:14px;height:1100px}
+h2{font-size:24px;display:flex;align-items:center;gap:10px;letter-spacing:-.01em}
+h2 i{font-style:normal;display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--paper);font-size:15px}
+h2 small{font-size:13px;font-weight:400;color:var(--ink3);margin-left:auto}
+/* 1 选点链路（同第一版） */
+.flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px;counter-reset:s}
+.step{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 12px;counter-increment:s}
+.step b::before{content:counter(s);display:inline-grid;place-items:center;width:20px;height:20px;margin-right:7px;border-radius:50%;background:var(--red);color:#fff;font-size:12px;vertical-align:2px}
+.step b{display:block;font-size:16px}
+.step p{font-size:12.5px;color:var(--ink2);margin-top:2px}
+.step .src{display:inline-block;margin-top:6px;font-size:11px;padding:1px 7px;border-radius:4px;background:#efe7df;color:var(--ink2)}
+.step .src.hd{background:#f6e3df;color:var(--red)}.step .src.bd{background:#e3ecf3;color:var(--blue)}
+.funnel{margin-top:10px}.funnel>p{font-size:13px;color:var(--ink2);margin-bottom:5px}
+.funnel .row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.funnel .row div{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 12px}
+.funnel .row div:not(:last-child)::after{content:"→";position:absolute;right:-15px;top:50%;transform:translateY(-50%);color:var(--ink3);font-size:14px}
+.funnel .row div:last-child{background:#f8e5df;border-color:#e9c4bb}
+.funnel b{font-size:23px;line-height:1.15;margin-right:4px}.funnel span{font-size:13px;color:var(--ink2)}
+.funnel .row div:last-child b{color:var(--red)}
+/* 2 真实地图 */
+.shot{border-radius:12px;overflow:hidden;border:1px solid var(--line);box-shadow:0 2px 6px rgba(60,30,20,.06),0 12px 30px rgba(60,30,20,.08);background:#fff;margin-top:10px}
+.shot.crop{height:280px}.shot.crop img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 46%}
+.cap{font-size:13px;color:var(--ink2);margin-top:6px}.cap b{color:var(--ink)}
+/* 3 自检 */
+.ck{list-style:none;padding:0;margin-top:10px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 10px;counter-reset:k}
+.ck li{counter-increment:k;display:flex;gap:8px;align-items:center;font-size:13px;line-height:1.35;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:5px 10px}
+.ck li::before{content:counter(k);flex:none;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--ok);color:#fff;font-size:11px}.ck li.w::before{background:#9a5b00}
+.foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid var(--line);padding-top:10px;font-size:13px;color:var(--ink2)}
+.foot code{font:600 15px/1 ui-monospace,Consolas,monospace;background:var(--ink);color:var(--paper);padding:8px 12px;border-radius:8px;display:inline-block;margin-top:6px}
+.foot .q{text-align:right}.foot .q b{display:block;font-size:17px;color:var(--ink)}
+.credit{font-size:10px;color:var(--ink3);text-align:right;margin-top:-8px}
+</style>
+</head>
+<body>
+<section class="hero">
+  <img src="img/hero.png" alt="AI 生成主视觉：黄昏的上海街道，红色公交车身与地铁口灯箱广告位，红色覆盖线串起沿街门店">
+  <div class="t">
+    <div class="top"><span>INTERCITY HACK 湖州场 · AI+办公赛道</span><span>上海新云传媒命题</span></div>
+    <div class="brand"><b>即案</b><span>FLASHPLAN</span></div>
+    <h1><span>当天</span>出案，<span>当场</span>改案</h1>
+    <p class="lede">户外媒体 AI 提案工作台：给定行业、预算、媒体和档期，几十秒产出可直接对客户演示的公交 + 地铁口投放方案，每条线路的空位和价格都能在红豆查到。</p>
+<div class="tag">
+    <div><b>好几天 → 几十秒</b><span>一份完整提案的出案时间</span></div>
+    <div><b>&lt; 60 ms</b><span>改预算 / 换行业 / 换档期重算</span></div>
+  </div>
+
+  </div>
+</section>
+
+<main class="body">
+  <section>
+    <h2><i>1</i>六步，从客户需求到提案 <small>全程自动，销售只管确认</small></h2>
+    <div class="flow">
+      <div class="step"><b>读懂需求</b><p>贴一段客户邮件或口述，自动读出行业、预算、档期</p><span class="src">客户 brief</span></div>
+      <div class="step"><b>找到门店</b><p>自动找出品牌的全部门店，或客户给的地址</p><span class="src bd">大数据平台</span></div>
+      <div class="step"><b>找附近广告位</b><p>门店 500 米内经过的公交，800 米内的地铁口</p><span class="src bd">大数据平台</span></div>
+      <div class="step"><b>查有没有空</b><p>整段档期每天都有空才算数，绝不卖重</p><span class="src hd">红豆系统</span></div>
+      <div class="step"><b>挑最划算的</b><p>预算内优先选人多、离门店近的，尽量多覆盖门店</p><span class="src">自动组合</span></div>
+      <div class="step"><b>一键出提案</b><p>报价、上刊时间都算好，生成给客户看的网页</p><span class="src">断网也能打开</span></div>
+    </div>
+    <div class="funnel">
+      <p>以乐高乐园、500 万预算为例，一层层筛下来：</p>
+      <div class="row">
+        <div><b>942</b><span>个亲子聚集点</span></div>
+        <div><b>926</b><span>个附近广告位</span></div>
+        <div><b>834</b><span>个档期内有空</span></div>
+        <div><b>19</b><span>个最终入选</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><i>2</i>真实地图上看组合 <small>彩色 = 选中线路，悬停变红线</small></h2>
+    <div class="shot crop"><img src="img/map.png" alt="投放地图：灰白底图上的彩色公交线路，悬停的 224 路显示为加粗红线"></div>
+    <p class="cap">高德底图 + 平台线路轨迹，<b>线宽随缩放变化</b>；灰白 / 彩色底图可切换，终点标线路号，地铁口标 M。</p>
+  </section>
+
+  <section>
+    <h2><i>3</i>交给客户前，自己先查一遍 <small>10 项全过才算好提案</small></h2>
+    <ol class="ck">
+      <li>客户是谁、要做什么，一句话说清</li><li>预算、档期、媒体，一项不漏</li>
+      <li>每条线路为什么选，都有依据</li><li>主力和辅助分清，说得出取舍</li>
+      <li>钱花在哪，一笔一笔列清楚</li><li>排的档期，红豆里真的有空</li>
+      <li>效果怎么算、怎么监测，写明白</li><li>出错、下雨误工，都有补救办法</li>
+      <li>改预算只增减几条，不用重做</li><li>网页提案，现场就能点开改</li>
+    </ol>
+  </section>
+
+  <footer class="foot">
+    <div>现场运行<br><code>node server.mjs → 127.0.0.1:5188</code></div>
+    <div class="q"><b>懂客户 · 组合能打 · 换个数还跑得动</b>评委的三个问题，现场当场回答。</div>
+  </footer>
+  <p class="credit">主视觉由 AI 生成（gpt-image-2-4k），其余画面为工作台实时截图</p>
+</main>
+</body>
+</html>

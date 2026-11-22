@@ -1,0 +1,9 @@
+# 登录令牌、会话 cookie、原始抓取数据和截图只留在本机
+/data/
+.venv/
+node_modules/
+materials/
+materials_txt/
+outputs/
+
+.env.local

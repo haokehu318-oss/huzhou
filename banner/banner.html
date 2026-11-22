@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>易拉宝 · 即案 FLASHPLAN</title>
+<style>
+/* 易拉宝 80×200cm，按 800×2000 排版，导出时 2 倍 = 1600×4000 px */
+:root{--ink:#221c1a;--ink2:#5d544f;--ink3:#8a807a;--paper:#f6f2ec;--card:#fffdfa;--line:rgba(34,28,26,.12);--red:#c2372d;--red2:#e60012;--blue:#1f5f8b;--ok:#2f6b3a}
+*{box-sizing:border-box;margin:0}
+html,body{width:800px;height:2000px;overflow:hidden;background:var(--paper)}
+body{font:15px/1.55 "PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);font-variant-numeric:tabular-nums}
+.page{width:800px;height:2000px;padding:36px 46px 26px;display:flex;flex-direction:column;gap:20px}
+.top{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--ink2)}
+.top b{color:var(--red);font-size:15px;letter-spacing:.06em}
+h1{font-size:58px;line-height:1.08;letter-spacing:-.02em;margin-top:6px}
+h1 span{color:var(--red)}h1 .en{font:800 28px/1 system-ui,sans-serif;letter-spacing:.16em;color:var(--red);vertical-align:middle}
+.lede{font-size:19px;color:var(--ink2);margin-top:10px;line-height:1.5}
+.vs{display:grid;grid-template-columns:1fr 64px 1fr;align-items:stretch;margin-top:4px}
+.vs>div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+.vs .arrow{background:none;border:0;display:grid;place-items:center;font-size:30px;color:var(--red);padding:0}
+.vs h3{font-size:14px;color:var(--ink3);font-weight:600}
+.vs big{display:block;font-size:30px;font-weight:800;line-height:1.2;margin:4px 0 6px}
+.vs .now big{color:var(--red)}
+.vs p{font-size:13.5px;color:var(--ink2)}
+h2{font-size:24px;display:flex;align-items:center;gap:10px;letter-spacing:-.01em}
+h2 i{font-style:normal;display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--paper);font-size:15px}
+h2 small{font-size:13px;font-weight:400;color:var(--ink3);margin-left:auto}
+/* 流程 */
+.flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px;counter-reset:s}
+.step{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 12px;counter-increment:s}
+.step::before{content:counter(s);position:absolute;top:10px;right:12px;font-size:26px;font-weight:800;color:rgba(194,55,45,.16)}
+.step b{display:block;font-size:16px}
+.step p{font-size:12.5px;color:var(--ink2);margin-top:2px}
+.step .src{display:inline-block;margin-top:6px;font-size:11px;padding:1px 7px;border-radius:4px;background:#efe7df;color:var(--ink2)}
+.step .src.hd{background:#f6e3df;color:var(--red)}.step .src.bd{background:#e3ecf3;color:var(--blue)}
+.funnel{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:10px;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.funnel div{background:var(--card);padding:7px 12px;border-right:1px solid var(--line)}
+.funnel div:last-child{background:#f8e5df;border:0}
+.funnel b{font-size:23px;display:block;line-height:1.15}.funnel span{font-size:12px;color:var(--ink2)}
+/* 截图 */
+.shot{border-radius:12px;overflow:hidden;border:1px solid var(--line);box-shadow:0 2px 6px rgba(60,30,20,.06),0 12px 30px rgba(60,30,20,.08);background:#fff}
+.shot img{display:block;width:100%}.shot.crop{height:300px}.shot.crop img{height:100%;object-fit:cover;object-position:50% 46%}
+.cap{font-size:13px;color:var(--ink2);margin-top:6px}
+.cap b{color:var(--ink)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-top:12px;align-items:start}
+.pts{list-style:none;padding:0;margin-top:0;display:grid;gap:6px}
+.pts li{font-size:13.5px;padding-left:16px;position:relative}
+.pts li::before{content:"";position:absolute;left:0;top:8px;width:7px;height:7px;border-radius:2px;background:var(--red)}
+.pts b{font-weight:700}
+/* 数据底座 */
+.base{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:10px}
+.base div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:6px 10px}
+.base b{display:block;font-size:21px;line-height:1.2}.base span{font-size:11.5px;color:var(--ink2)}
+.foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid var(--line);padding-top:12px;font-size:13px;color:var(--ink2)}
+.diffbox{margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px}.dh{display:flex;justify-content:space-between;align-items:baseline}.dh span{font-size:12px;color:var(--ink3)}
+.chips{display:flex;flex-wrap:wrap;gap:6px 10px;margin-top:8px;font-size:13px}.chips span{font-size:11px;padding:1px 6px;border-radius:4px;margin-right:-6px}.chips .rm{background:#f6e3df;color:var(--red)}.chips .ad{background:#e5efe6;color:var(--ok)}
+.ck{list-style:none;padding:0;margin-top:10px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 8px;counter-reset:k}
+.ck li{counter-increment:k;display:flex;gap:7px;align-items:center;font-size:12.5px;line-height:1.35;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:5px 8px}
+.ck li::before{content:counter(k);flex:none;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--ok);color:#fff;font-size:11px}.ck li.w::before{background:#9a5b00}
+.foot code{font:600 15px/1 ui-monospace,Consolas,monospace;background:var(--ink);color:var(--paper);padding:8px 12px;border-radius:8px;display:inline-block;margin-top:6px}
+.foot .q{text-align:right}
+.foot .q b{display:block;font-size:17px;color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="top"><b>即案 FLASHPLAN</b><span>INTERCITY HACK 湖州场 · AI+办公赛道 · 上海新云传媒命题</span></div>
+
+  <header>
+    <h1>即案 <small class="en">FLASHPLAN</small><br><span>当天</span>出案，<span>当场</span>改案</h1>
+    <p class="lede">给定行业、预算、媒体和档期，几十秒产出可直接对客户演示的公交 + 地铁口投放方案，每条线路的空位和价格都能在红豆查到。</p>
+  </header>
+
+  <section class="vs">
+    <div><h3>今天 · 销售人工</h3><big>好几天</big><p>查门店附近的线路 → 红豆逐条核空位 → 翻刊例算折扣 → 排上刊 → 做 PPT。慢一步，单子就被竞对拿走。</p></div>
+    <div class="arrow">→</div>
+    <div class="now"><h3>现在 · 工作台</h3><big>&lt; 60 毫秒重算</big><p>四步串成一条自动链路。评委改预算、换行业、换档期，方案当场重出，还列出加了哪些线、减了哪些线。</p></div>
+  </section>
+
+  <section>
+    <h2><i>1</i>从品牌到方案的选点链路 <small>每一步都有系统证据</small></h2>
+    <div class="flow">
+      <div class="step"><b>品牌理解</b><p>行业 + 头部品牌 + campaign 假设书（七要素）</p><span class="src">参考 brief 一键解析</span></div>
+      <div class="step"><b>门店 / 地址圈选</b><p>品牌全部门店，或客户给的具体地址</p><span class="src bd">大数据平台 POI · 地理编码</span></div>
+      <div class="step"><b>覆盖分析找线路</b><p>公交 500 米途经，地铁口 800 米步行</p><span class="src bd">平台线路轨迹 · 日均人次</span></div>
+      <div class="step"><b>红豆核对可售</b><p>整段档期都空才算，已扣合同、预定、保养</p><span class="src hd">红豆库存 · 占用明细</span></div>
+      <div class="step"><b>预算内择优组案</b><p>人次 × 门店相关度，首次覆盖新门店加分</p><span class="src">单线 2–5 辆分散覆盖</span></div>
+      <div class="step"><b>报价、倒排、出提案</b><p>刊例口径报价，按夜间施工倒排上刊</p><span class="src">单文件 HTML 离线可开</span></div>
+    </div>
+    <div class="funnel">
+      <div><b>942</b><span>亲子人群锚点（乐园案例）</span></div>
+      <div><b>926</b><span>半径内自营媒体</span></div>
+      <div><b>834</b><span>档期内红豆有空位</span></div>
+      <div><b>19</b><span>500 万预算内入选</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2><i>2</i>真实地图上看组合 <small>彩色 = 选中线路，悬停变红线</small></h2>
+    <div class="shot crop" style="margin-top:10px"><img src="img/map.png" alt="投放地图：灰白底图上的彩色公交线路，悬停的 224 路显示为加粗红线"></div>
+    <p class="cap">高德底图 + 平台线路轨迹，<b>线宽随缩放变化</b>；灰白 / 彩色底图可切换，终点标线路号，地铁口标 M。</p>
+  </section>
+
+  <section>
+    <h2><i>3</i>客户点名线路，数字当场摊开</h2>
+    <div class="two" style="grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr)">
+      <div class="shot"><img src="img/detail.png" alt="线路详情卡：可售、合同预定保养、日均人次、12 个月可售柱、价格算式"></div>
+      <div>
+        <ul class="pts">
+          <li><b>可售拆解</b>：总量 − 合同 − 预定 − 保养 = 本档期空车</li>
+          <li><b>12 个月可售柱</b>：一眼看出哪个月有车，月份可多选</li>
+          <li><b>价格算式</b>：刊例 × 月数 × 辆数 + 制作费，键盘直接改数量，超可售即提示</li>
+          <li><b>向红豆核对</b>：实时查询并列出占用订单。167 路 4–5 月 11 − 2 − 6 = 3，与红豆一致</li>
+          <li><b>按地址查</b>：只给门店地址，也能列出服务半径内全部线路和出入口</li>
+        </ul>
+        <div class="diffbox"><div class="dh"><b>改预算即改案</b><span>乐园案例 494 万 → 199.9 万</span></div>
+          <div class="chips"><span class="rm">移除</span>985路 −2<span class="rm">移除</span>980路 −2<span class="rm">移除</span>451路 −2<span class="rm">移除</span>576路 −2<span class="rm">移除</span>沪南线 −2<span class="ad">加量</span>浦东105路 +1</div>
+          <p class="cap">共移除 10 条线、加量 1 条；清单里变化的行标黄。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="two" style="grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);margin-top:0">
+    <div><h2><i>4</i>按评分标准自检 <small>10 条实时打勾</small></h2>
+      <ol class="ck">
+        <li>客户与 campaign 一句话说清</li><li>行业 · 预算 · 媒体 · 档期四项落进方案</li>
+        <li>选点逻辑每步有证据</li><li>组合有主次，讲得出取舍</li>
+        <li>预算拆分：占比、刊例 × 折扣、制作费</li><li class="w">排期与红豆可售一致（实时核对后转绿）</li>
+        <li>效果有口径，监测写清</li><li>误一补二、天气施工、备选替换</li>
+        <li>改预算加减模块，不推倒重来</li><li>HTML 现场可交互</li>
+      </ol></div>
+    <div><h2><i>5</i>数据底座</h2>
+      <div class="base">
+        <div><b>430</b><span>红豆公交线路</span></div>
+        <div><b>861</b><span>红豆地铁出入口</span></div>
+        <div><b>12 个月</b><span>2027 逐月库存快照</span></div>
+        <div><b>1,444</b><span>平台线路 / 出口人流</span></div>
+        <div><b>5 × 3</b><span>行业 × 预算回归测试</span></div>
+        <div><b>8 / 8</b><span>引擎约束测试通过</span></div>
+      </div></div>
+  </section>
+  <footer class="foot">
+    <div>现场运行<br><code>node server.mjs → 127.0.0.1:5188</code></div>
+    <div class="q"><b>懂客户 · 组合能打 · 换个数还跑得动</b>评委的三个问题，现场当场回答。</div>
+  </footer>
+</div>
+</body>
+</html>

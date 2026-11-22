@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>即案 FLASHPLAN · 户外投放 AI 提案工作台</title>
+<link rel="stylesheet" href="vendor/leaflet.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brandmark"><b>即案</b><span>FLASHPLAN</span><em>户外投放 AI 提案工作台 · 新云传媒</em></div>
+  <div class="status" aria-live="polite">
+    <button class="pill" id="pillHd" type="button" title="红豆广告媒体管理系统">红豆库存 · <span>检查中</span></button>
+    <button class="pill" id="pillBd" type="button" title="新云大数据可视化平台">大数据平台 · <span>检查中</span></button>
+    <span class="clock" id="clock" title="从选定客户到生成提案的用时">出案用时 00:00</span>
+  </div>
+</header>
+
+<main class="shell">
+  <aside class="panel" aria-label="提案输入">
+    <section class="block">
+      <h2><span>1</span>客户</h2>
+      <div class="seg" id="industry" role="group" aria-label="行业"></div>
+      <label class="field">客户 / 品牌名称
+        <span class="row"><input id="brandKw" autocomplete="off"><button type="button" id="brandGo" class="ghost">检索门店</button></span>
+      </label>
+      <div class="seg two" role="radiogroup" aria-label="圈选方式">
+        <label><input type="radio" name="mode" value="brand"><span>按品牌全部门店</span></label>
+        <label><input type="radio" name="mode" value="addr"><span>按客户具体地址</span></label>
+      </div>
+      <p class="hint" id="brandInfo"></p>
+      <div id="addrBox" hidden>
+        <label class="field">客户地址（每行一个，可填门店名、地址或「经度,纬度」）
+          <textarea id="addrText" rows="3" placeholder="例：上海市黄浦区福州路 246 号&#10;陆家嘴东路 161 号"></textarea>
+        </label>
+        <button type="button" id="addrGo" class="ghost">查询服务半径内的线路与出入口</button>
+        <ul class="addrs" id="addrList"></ul>
+      </div>
+      <details class="brief" id="hypoBox"><summary>campaign 假设书（七要素，方案逐条回应）</summary><div id="hypo"></div></details>
+      <details class="brief"><summary>粘贴客户 brief 自动填写</summary>
+        <select id="refBrief" aria-label="参考 brief"><option value="">选一个参考 brief…</option></select>
+        <textarea id="briefText" rows="6" placeholder="例：客户「招商银行」计划 2027 年 3 月在上海做网点到店推广，预算 200 万，公交车身 + 地铁出入口……"></textarea>
+        <button type="button" id="briefGo" class="ghost">解析 brief</button>
+        <p class="hint" id="briefInfo"></p>
+      </details>
+    </section>
+
+    <section class="block">
+      <h2><span>2</span>客户指定线路 / 点位 <small>优先排入</small></h2>
+      <label class="field">输入线路号或地铁站名
+        <span class="row"><input id="forceKw" list="mediaList" autocomplete="off" placeholder="如 18路、人民广场"><button type="button" id="forceGo" class="ghost">加入</button></span>
+      </label>
+      <datalist id="mediaList"></datalist>
+      <label class="check"><input type="checkbox" id="autoFill"> 剩余预算由系统自动补足</label>
+      <ul class="forced" id="forcedList"></ul>
+      <p class="hint" id="forceInfo">指定的线路先占预算；可售不足会标红，不会超卖。</p>
+    </section>
+
+    <section class="block">
+      <h2><span>3</span>预算 <output id="budgetOut"></output></h2>
+      <input type="range" id="budget" min="1000000" max="5000000" step="100000" aria-label="预算">
+      <div class="chips" id="budgetChips"></div>
+    </section>
+
+    <section class="block">
+      <h2><span>4</span>媒体与服务半径</h2>
+      <div class="seg two" role="group" aria-label="投放媒体">
+        <label><input type="checkbox" id="mBus"><span>公交车身</span></label>
+        <label><input type="checkbox" id="mMetro"><span>地铁出入口</span></label>
+      </div>
+      <div class="row two">
+        <label class="field">公交途经半径(米)<input type="number" id="busR" min="100" max="3000" step="100"></label>
+        <label class="field">地铁口直线半径(米)<input type="number" id="metroR" min="100" max="3000" step="100"></label>
+      </div>
+      <label class="field" id="shareWrap">地铁口预算占比 <output id="shareOut"></output>
+        <input type="range" id="share" min="0.05" max="0.95" step="0.05">
+      </label>
+      <div class="seg two" role="radiogroup" aria-label="投放目标">
+        <label><input type="radio" name="obj" value="visit"><span>到店引流</span></label>
+        <label><input type="radio" name="obj" value="reach"><span>品牌曝光</span></label>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2><span>5</span>档期</h2>
+      <div class="row two">
+        <label class="field">开始<input type="date" id="start" min="2027-01-01" max="2027-12-31"></label>
+        <label class="field">结束<input type="date" id="end" min="2027-01-01" max="2027-12-31"></label>
+      </div>
+      <div class="months" id="months" role="group" aria-label="2027 各月可售量，可多选"></div>
+      <p class="hint" id="monthHint">柱高 = 该月服务半径内可售车辆与地铁口数量。点柱子多选月份，不连续的月份每段单独上画。</p>
+    </section>
+
+
+
+    <details class="block adv">
+      <summary>报价与施工参数</summary>
+      <label class="field">折扣 <output id="discOut"></output><input type="range" id="discount" min="0.4" max="1" step="0.05"></label>
+      <div class="row two">
+        <label class="field">单线最多(辆)<input type="number" id="maxLine" min="1" max="20"></label>
+        <label class="field">单晚装车(台)<input type="number" id="perNight" min="5" max="60"></label>
+      </div>
+    </details>
+  </aside>
+
+  <section class="work" id="work">
+    <div class="kpis" id="kpis"></div>
+    <div class="actions">
+      <button type="button" id="liveBtn" class="ghost">红豆实时核对可售</button>
+      <button type="button" id="pinBtn" class="ghost">设为对比基准</button>
+      <button type="button" id="reportBtn" class="primary">生成客户提案</button>
+    </div>
+    <div class="grid">
+      <div class="mapcard" id="map" role="region" aria-label="投放地图"></div>
+      <div class="side">
+        <div class="card" id="detail"></div>
+        <div class="card" id="sched"></div>
+      </div>
+    </div>
+    <div class="card table">
+      <div class="tabs" role="tablist">
+        <button type="button" role="tab" id="tabPlan" aria-selected="true">方案线路 / 点位</button>
+        <button type="button" role="tab" id="tabCand" aria-selected="false">服务半径内全部候选</button>
+      </div>
+      <div class="tbl" id="list"></div>
+    </div>
+    <div class="card" id="diff"></div>
+    <div class="card" id="checks"></div>
+    <p class="foot" id="foot"></p>
+  </section>
+</main>
+
+<dialog id="dlg"><form method="dialog" id="dlgBody"></form></dialog>
+<script src="vendor/leaflet.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>
